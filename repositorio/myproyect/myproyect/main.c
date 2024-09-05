@@ -7,6 +7,18 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 int game_is_running = NULL;
 
+int last_frame_time = 0; 
+
+struct ball 
+{
+	float x;
+	float y;
+	float width;
+	float height;
+
+
+} ball;
+
 
 int initialize_window(void)
 {
@@ -70,15 +82,39 @@ void process_input()
 }
 void setup()
 {
+	ball.x = 20;
+	ball.y = 20;
+	ball.height = 15;
+	ball.width = 15;
 
 }
 void update()
 {
-	// to do:
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+
+	last_frame_time = SDL_GetTicks();
+	ball.x += 2;
+	ball.y += 2;
 }
 void render()
 {
-	// to do:
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+
+	SDL_Rect ball_rect = { 
+		(int)ball.x,
+		(int)ball.y,
+		(int)ball.width,
+		(int)ball.height
+	};
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(renderer, &ball_rect);
+
+	SDL_RenderPresent(renderer);
+
+
+
 }
 void destroy_window()
 {
