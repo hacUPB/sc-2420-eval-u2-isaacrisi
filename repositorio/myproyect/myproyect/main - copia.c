@@ -8,10 +8,8 @@ SDL_Renderer* renderer = NULL;
 int game_is_running = NULL;
 
 int last_frame_time = 0;
-void draw_circle(SDL_Renderer* renderer, int center_x, int center_y, int radius);
 
-
-struct rect
+struct ball
 {
 	float x;
 	float y;
@@ -19,13 +17,6 @@ struct rect
 	float height;
 
 
-} rect;
-
-struct ball
-{
-	int center_x;
-	int center_y;
-	int radius;
 } ball;
 
 
@@ -91,19 +82,14 @@ void process_input()
 }
 void setup()
 {
-	rect.x = 20;
-	rect.y = 20;
-	rect.height = 15;
-	rect.width = 15;
-
-	ball.center_x = 20;
-	ball.center_y = 20;
-	ball.radius = 25;
+	ball.x = 20;
+	ball.y = 20;
+	ball.height = 15;
+	ball.width = 15;
 
 }
 void update()
 {
-	
 	int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
 
 	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
@@ -114,36 +100,28 @@ void update()
 	float delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f;
 
 	last_frame_time = SDL_GetTicks();
-	rect.x += 70 * delta_time;
-	rect.y += 50 * delta_time;
-	
-	ball.center_x += 5 + delta_time;
-	ball.center_y += 2 + delta_time;
-	
-	
+	ball.x += 70 * delta_time;
+	ball.y += 50 * delta_time;
 }
 void render()
 {
-	
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
 	SDL_Rect ball_rect = {
-		(int)rect.x,
-		(int)rect.y,
-		(int)rect.width,
-		(int)rect.height
+		(int)ball.x,
+		(int)ball.y,
+		(int)ball.width,
+		(int)ball.height
 	};
 
-	// Dibuja el rectángulo
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(renderer, &ball_rect);
 
-	// Dibuja el círculo
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	draw_circle(renderer, ball.center_x, ball.center_y, ball.radius);
-
 	SDL_RenderPresent(renderer);
+
+
+
 }
 void destroy_window()
 {
@@ -151,41 +129,9 @@ void destroy_window()
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
-void draw_circle(SDL_Renderer* renderer, int center_x, int center_y, int radius) {
-	int x = radius - 1;
-	int y = 0;
-	int dx = 1;
-	int dy = 1;
-	int err = dx - (radius << 1);  // "radius << 1" is the same as "radius * 2"
-
-	while (x >= y) {
-		SDL_RenderDrawPoint(renderer, center_x + x, center_y + y);
-		SDL_RenderDrawPoint(renderer, center_x + y, center_y + x);
-		SDL_RenderDrawPoint(renderer, center_x - y, center_y + x);
-		SDL_RenderDrawPoint(renderer, center_x - x, center_y + y);
-		SDL_RenderDrawPoint(renderer, center_x - x, center_y - y);
-		SDL_RenderDrawPoint(renderer, center_x - y, center_y - x);
-		SDL_RenderDrawPoint(renderer, center_x + y, center_y - x);
-		SDL_RenderDrawPoint(renderer, center_x + x, center_y - y);
-
-		if (err <= 0) {
-			y++;
-			err += dy;
-			dy += 2;
-		}
-
-		if (err > 0) {
-			x--;
-			dx += 2;
-			err += dx - (radius << 1);
-		}
-	}
-}
-
 
 int main(int argc, char* args[])
 {
-	
 	game_is_running = initialize_window();
 
 	setup();
