@@ -10,6 +10,14 @@ int game_is_running = NULL;
 int last_frame_time = 0;
 void draw_circle(SDL_Renderer* renderer, int center_x, int center_y, int radius);
 
+int velx = VELOCIDADX;
+int vely = VELOCIDADY;
+r = 0;
+g = 100;
+b = 200;
+
+
+
 
 struct rect
 {
@@ -17,15 +25,30 @@ struct rect
 	float y;
 	float width;
 	float height;
+	int velx;
+	int vely;
 
 
 } rect;
+struct rect2
+{
+	float x;
+	float y;
+	float width;
+	float height;
+	int velx;
+	int vely;
+
+
+} rect2;
 
 struct ball
 {
-	int center_x;
-	int center_y;
+	float center_x;
+	float center_y;
 	int radius;
+	int velx;
+	int vely;
 } ball;
 
 
@@ -95,10 +118,21 @@ void setup()
 	rect.y = 20;
 	rect.height = 15;
 	rect.width = 15;
+	rect.velx = VELOCIDADX;
+	rect.vely = VELOCIDADY;
+
+	rect2.x = 400;
+	rect2.y = 20;
+	rect2.height = 15;
+	rect2.width = 15;
+	rect2.velx = VELOCIDADX;
+	rect2.vely = VELOCIDADY;
 
 	ball.center_x = 20;
 	ball.center_y = 20;
 	ball.radius = 25;
+	ball.velx = VELOCIDADX;
+	ball.vely = VELOCIDADY;
 
 }
 void update()
@@ -114,11 +148,93 @@ void update()
 	float delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f;
 
 	last_frame_time = SDL_GetTicks();
-	rect.x += 70 * delta_time;
-	rect.y += 50 * delta_time;
+	rect.x += rect.velx * delta_time;
+	rect.y += rect.vely * delta_time;
+	//rect.width += 1;
+	//rect.height += 1;
+	rect2.x += rect2.velx * delta_time;
+	rect2.y += rect2.vely * delta_time;
 	
-	ball.center_x += 5 + delta_time;
-	ball.center_y += 2 + delta_time;
+	ball.center_x += ball.velx + delta_time;
+	ball.center_y += ball.vely + delta_time;
+
+
+	//colision con las paredes
+	if (rect.x >= WINDOW_WIDTH)
+	{
+		rect.velx = -rect.velx;
+	}
+	if (rect.y >= WINDOW_HEIGHT)
+	{
+		rect.vely = -rect.vely;
+	}
+	if (rect.x < 0)
+	{
+		rect.velx = VELOCIDADX;
+	}
+	if (rect.y < 0)
+	{
+		rect.vely = VELOCIDADY;
+		
+	}
+	if (rect2.x >= WINDOW_WIDTH)
+	{
+		rect2.velx = -rect2.velx;
+	}
+	if (rect2.y >= WINDOW_HEIGHT)
+	{
+		rect2.vely = -rect2.vely;
+	}
+	if (rect2.x < 0)
+	{
+		rect2.velx = VELOCIDADX;
+	}
+	if (rect2.y < 0)
+	{
+		rect2.vely = VELOCIDADY;
+
+	}
+	if (ball.center_x >= WINDOW_WIDTH)
+	{
+		ball.velx = -ball.velx;
+	}
+	if (ball.center_y >= WINDOW_HEIGHT)
+	{
+		ball.vely = -ball.vely;
+	}
+	if (ball.center_x < 0)
+	{
+		ball.velx = VELOCIDADX;
+	}
+	if (ball.center_y < 0)
+	{
+		ball.vely = VELOCIDADY;
+
+	}
+	//ciclo de colores
+	r++;
+	g++;
+	b++;
+	//colisiones entre figurar
+	if (rect.x == ball.center_x || rect.x == rect2.x)
+	{
+		rect.velx = -rect.velx;
+		rect2.velx = -rect2.velx;
+		ball.velx = -ball.velx;
+
+	}
+	if (rect.y == ball.center_y || rect.y == rect2.y)
+	{
+		rect.vely = -rect.vely;
+		rect2.vely = -rect2.vely;
+		ball.vely = -ball.vely;
+	}
+	
+	//cambiar orientacion
+	
+	
+	
+	
 	
 	
 }
@@ -134,10 +250,19 @@ void render()
 		(int)rect.width,
 		(int)rect.height
 	};
+	SDL_Rect ball_rect2 = {
+		(int)rect2.x,
+		(int)rect2.y,
+		(int)rect2.width,
+		(int)rect2.height
+	};
 
 	// Dibuja el rectángulo
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 	SDL_RenderFillRect(renderer, &ball_rect);
+
+	SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
+	SDL_RenderFillRect(renderer, &ball_rect2);
 
 	// Dibuja el círculo
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
