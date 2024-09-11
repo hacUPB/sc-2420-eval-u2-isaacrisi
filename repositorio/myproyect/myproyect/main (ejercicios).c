@@ -8,6 +8,7 @@ SDL_Renderer* renderer = NULL;
 int game_is_running = NULL;
 
 int last_frame_time = 0;
+void draw_circle(SDL_Renderer* renderer, int center_x, int center_y, int radius);
 
 int velx = VELOCIDADX;
 int vely = VELOCIDADY;
@@ -38,21 +39,17 @@ struct rect2
 	int velx;
 	int vely;
 
-	struct rect3
-	{
-		float x;
-		float y;
-		float width;
-		float height;
-		int velx;
-		int vely;
-
-	}rect3;
-
 
 } rect2;
 
-
+struct ball
+{
+	float center_x;
+	float center_y;
+	int radius;
+	int velx;
+	int vely;
+} ball;
 
 
 int initialize_window(void)
@@ -118,25 +115,24 @@ void process_input()
 void setup()
 {
 	rect.x = 20;
-	rect.y = 250;
-	rect.height = 30;
-	rect.width = 30;
-	rect.velx = 0;
-	rect.vely = 15;
+	rect.y = 20;
+	rect.height = 15;
+	rect.width = 15;
+	rect.velx = VELOCIDADX;
+	rect.vely = VELOCIDADY;
 
-	rect2.x = 0;
-	rect2.y = 300;
-	rect2.height = 300;
-	rect2.width = WINDOW_WIDTH*2;
-	rect2.velx = -VELOCIDADX;
+	rect2.x = 400;
+	rect2.y = 20;
+	rect2.height = 15;
+	rect2.width = 15;
+	rect2.velx = VELOCIDADX;
+	rect2.vely = VELOCIDADY;
 
-	rect2.rect3.x = 400;
-	rect2.rect3.y = rect2.y;
-	rect2.rect3.height = 300;
-	rect2.rect3.width = 40;
-	rect2.rect3.velx = -VELOCIDADX;
-	
-
+	ball.center_x = 20;
+	ball.center_y = 20;
+	ball.radius = 25;
+	ball.velx = VELOCIDADX;
+	ball.vely = VELOCIDADY;
 
 }
 void update()
@@ -158,14 +154,13 @@ void update()
 	//rect.height += 1;
 	rect2.x += rect2.velx * delta_time;
 	rect2.y += rect2.vely * delta_time;
-
-	float second_half_x = rect2.x + rect2.width / 2;
-	rect2.rect3.x = second_half_x + (rect2.width / 4) - rect2.rect3.width / 2;  // Centrado en la mitad de la segunda mitad
-	rect2.rect3.y = rect2.y;
+	
+	ball.center_x += ball.velx + delta_time;
+	ball.center_y += ball.vely + delta_time;
 
 
 	//colision con las paredes
-	/*if (rect.x >= WINDOW_WIDTH)
+	if (rect.x >= WINDOW_WIDTH)
 	{
 		rect.velx = -rect.velx;
 	}
@@ -181,40 +176,67 @@ void update()
 	{
 		rect.vely = VELOCIDADY;
 		
-	}*/
-	
+	}
+	if (rect2.x >= WINDOW_WIDTH)
+	{
+		rect2.velx = -rect2.velx;
+	}
 	if (rect2.y >= WINDOW_HEIGHT)
 	{
 		rect2.vely = -rect2.vely;
 	}
-	if (rect2.x < -800)
+	if (rect2.x < 0)
 	{
-		rect2.x = 0;
+		rect2.velx = VELOCIDADX;
 	}
 	if (rect2.y < 0)
 	{
 		rect2.vely = VELOCIDADY;
 
 	}
+	if (ball.center_x >= WINDOW_WIDTH)
+	{
+		ball.velx = -ball.velx;
+	}
+	if (ball.center_y >= WINDOW_HEIGHT)
+	{
+		ball.vely = -ball.vely;
+	}
+	if (ball.center_x < 0)
+	{
+		ball.velx = VELOCIDADX;
+	}
+	if (ball.center_y < 0)
+	{
+		ball.vely = VELOCIDADY;
 
-	
+	}
 	//ciclo de colores
 	r++;
 	g++;
 	b++;
 	//colisiones entre figurar
-	if (rect.y == 300)
+	if (rect.x == ball.center_x || rect.x == rect2.x)
 	{
-		rect.vely = 0;
+		rect.velx = -rect.velx;
+		rect2.velx = -rect2.velx;
+		ball.velx = -ball.velx;
+
 	}
-	// Verificar colisión entre el cuadrado (rect) y el suelo (rect2)
-	if (rect.y + rect.height >= rect2.y &&       // El borde inferior del cuadrado toca el borde superior del suelo
-		rect.x + rect.width >= rect2.x &&        // El borde derecho del cuadrado está dentro del suelo
-		rect.x <= rect2.x + rect2.width) {       // El borde izquierdo del cuadrado está dentro del suelo
-		rect.y = rect2.y - rect.height;          // Ajusta la posición del cuadrado para que no atraviese el suelo
-		rect.vely = 0;                           // Detiene el movimiento vertical (caída) del cuadrado
+	if (rect.y == ball.center_y || rect.y == rect2.y)
+	{
+		rect.vely = -rect.vely;
+		rect2.vely = -rect2.vely;
+		ball.vely = -ball.vely;
 	}
-		
+	
+	//cambiar orientacion
+	
+	
+	
+	
+	
+	
 }
 void render()
 {
@@ -234,12 +256,6 @@ void render()
 		(int)rect2.width,
 		(int)rect2.height
 	};
-	SDL_Rect ball_rect3 = {
-		(int)rect2.rect3.x,
-		(int)rect2.rect3.y,
-		(int)rect2.rect3.width,
-		(int)rect2.rect3.height
-	};
 
 	// Dibuja el rectángulo
 	SDL_SetRenderDrawColor(renderer, r, g, b, 255);
@@ -248,9 +264,9 @@ void render()
 	SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
 	SDL_RenderFillRect(renderer, &ball_rect2);
 
-	SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-	SDL_RenderFillRect(renderer, &ball_rect3);
-
+	// Dibuja el círculo
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	draw_circle(renderer, ball.center_x, ball.center_y, ball.radius);
 
 	SDL_RenderPresent(renderer);
 }
@@ -259,6 +275,36 @@ void destroy_window()
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+void draw_circle(SDL_Renderer* renderer, int center_x, int center_y, int radius) {
+	int x = radius - 1;
+	int y = 0;
+	int dx = 1;
+	int dy = 1;
+	int err = dx - (radius << 1);  // "radius << 1" is the same as "radius * 2"
+
+	while (x >= y) {
+		SDL_RenderDrawPoint(renderer, center_x + x, center_y + y);
+		SDL_RenderDrawPoint(renderer, center_x + y, center_y + x);
+		SDL_RenderDrawPoint(renderer, center_x - y, center_y + x);
+		SDL_RenderDrawPoint(renderer, center_x - x, center_y + y);
+		SDL_RenderDrawPoint(renderer, center_x - x, center_y - y);
+		SDL_RenderDrawPoint(renderer, center_x - y, center_y - x);
+		SDL_RenderDrawPoint(renderer, center_x + y, center_y - x);
+		SDL_RenderDrawPoint(renderer, center_x + x, center_y - y);
+
+		if (err <= 0) {
+			y++;
+			err += dy;
+			dy += 2;
+		}
+
+		if (err > 0) {
+			x--;
+			dx += 2;
+			err += dx - (radius << 1);
+		}
+	}
 }
 
 
