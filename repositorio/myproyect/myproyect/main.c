@@ -14,6 +14,10 @@ int vely = VELOCIDADY;
 r = 0;
 g = 100;
 b = 200;
+int is_jumping = 0;  // 0 si no está saltando, 1 si está saltando
+int jump_speed = -15; // Velocidad inicial del salto (negativa para saltar hacia arriba)
+int gravity = 30;     // Aceleración que simula la gravedad
+
 
 
 
@@ -99,6 +103,8 @@ void process_input()
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
+	
+
 	switch (event.type)
 	{
 	case SDL_QUIT:
@@ -109,7 +115,17 @@ void process_input()
 		{
 			game_is_running = FALSE;
 		}
+		else if (event.key.keysym.sym == SDLK_w)
+		{
+			if (!is_jumping) // Solo permite saltar si no está ya en el aire
+			{
+				is_jumping = 1;
+				rect.vely = jump_speed; // Inicializa la velocidad vertical para el salto
+			}
+			printf("Personaje saltando\n");
+		}
 		break;
+	
 
 	default:
 		break;
@@ -122,7 +138,7 @@ void setup()
 	rect.height = 30;
 	rect.width = 30;
 	rect.velx = 0;
-	rect.vely = 15;
+	rect.vely = 30;
 
 	rect2.x = 0;
 	rect2.y = 300;
@@ -158,6 +174,11 @@ void update()
 	//rect.height += 1;
 	rect2.x += rect2.velx * delta_time;
 	rect2.y += rect2.vely * delta_time;
+
+	if (is_jumping)
+	{
+		rect.vely += gravity * delta_time;
+	}
 
 	float second_half_x = rect2.x + rect2.width / 2;
 	rect2.rect3.x = second_half_x + (rect2.width / 4) - rect2.rect3.width / 2;  // Centrado en la mitad de la segunda mitad
