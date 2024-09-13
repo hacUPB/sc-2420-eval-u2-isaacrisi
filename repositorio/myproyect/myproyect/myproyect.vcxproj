@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\USER\Documents\sc-2420-eval-u2-isaacrisi\repositorio\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\B09S316est\Documents\sc-2420-eval-u2-isaacrisi\repositorio\SDL2\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\B09S316est\Documents\sc-2420-eval-u2-isaacrisi\repositorio\SDL2\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
