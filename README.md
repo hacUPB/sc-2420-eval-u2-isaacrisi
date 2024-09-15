@@ -1,4 +1,4 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/C5iNLRra)
+Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/C5iNLRra)
 # Documentación del Proyecto
 ## Unidad 2
 
@@ -15,8 +15,17 @@ el Set up se ejecuta cada vez que se inicia el programa
 el update se ejecuta una vez dada frame 
 y el render se ejecuta igual que el update
 
-el punto dos se realiza igual sin problemas 
+el punto dos se realiza igual sin problemas señ encuentra que si hay 
+---
+
 Altos FPS (frecuencia alta): Si los tiempos entre las llamadas a Update() y Render() son pequeños (por ejemplo, cercanos a 16 ms), el juego se verá fluido, ya que se están generando muchos cuadros por segundo.
+---
 Bajos FPS (frecuencia baja): Si los tiempos son más largos (por ejemplo, 30 ms o más), el juego puede comenzar a verse laggeado, lo que afecta negativamente la experiencia del jugador.
 Importancia de la Constancia:
 Mantener un tiempo de actualización constante entre las llamadas es crucial para evitar variaciones en la velocidad del juego. Si el tiempo entre las iteraciones varía demasiado, puede causar efectos no deseados, como movimientos bruscos o cambios en la velocidad del personaje.
+---
+para el punto tres se crea un ciclo while que permita crear un círculo siguiendo la ecuación r=x^2+y^2 dándole valores a "x" y a "y" con el ciclo y "r" definiéndolo desde el Código según el tamaño deseado. 
+este círculo presentó un problema y es que cuando se decidió moverlo a pesar de multiplicar su velocidad por el delta time se movia con relación al frame rate y no a los píxels por segundo definidos. 
+---
+para el cuarto punto que fue mover las figuras fue simple es cambiar su posición en x o en y y multiplicar ese cambio por el delta time 
+---
